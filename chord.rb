@@ -1,15 +1,17 @@
-# Your code here!
-
-# Your code here!
 #ボイスリーディングプログラム
 module Chord
     
     NOTES = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
     
+    private 
+        def self.chord_tone_degrees(*degrees)
+            ->(note) {degrees.include?(note%7)}
+        end
+    
     CODE_RULES = {
-        :I => ->(note){[1,3,5].include?(note%7)},
-        :IV => ->(note){[1,4,6].include?(note%7)},
-        :V => ->(note){[2,5,0].include?(note%7)}
+        :I => chord_tone_degrees(1,3,5),
+        :IV => chord_tone_degrees(1,4,6),
+        :V => chord_tone_degrees(2,5,0)
     }
     
     private_constant :NOTES
@@ -61,10 +63,7 @@ module Chord
                 }.each_with_index.min[1]
                 @chord_tones[nearest_note_index]
             end
-
     end
-    
-
 end
 
 chord_I = Chord::Chord.new(chord_num: :i)
