@@ -33,12 +33,9 @@ module Chord
         end
         
         def next(chord_num: nil, &chord_rule)
-            raise 'parameter is invalid' unless validate_parameter(chord_num, chord_rule)
             next_chord = Chord.new(chord_num: chord_num, &chord_rule)
-            next_chord_tones = next_chord.make_chord_tones
-            bottom_tone = @chord_tones.min
-            next_bottom_note = next_chord_tones[next_chord_tones.map{|tone| (bottom_tone-tone).abs}.each_with_index.min[1]]
-            next_chord.build_from(next_bottom_note)
+            next_chord.build_from next_chord.nearest_note_to(@chord_tones.min)
+            next_chord
         end
 
         private
@@ -46,7 +43,6 @@ module Chord
                 !chord_num.nil? || !chord_rule.nil?
             end
             
-        protected
             def make_chord_tones(bottom_note: nil)
                 bottom_note ||= @available_notes[0]
                 raise "note#{bottom_note} is not exist" unless @available_notes.include?(bottom_note)
@@ -57,6 +53,15 @@ module Chord
                     @available_notes[index_of_bottom_note+2]
                 ]
             end
+            
+        protected
+            def nearest_note_to(target_note)
+                nearest_note_index = @chord_tones.map { |note|
+                    target_note - note
+                }.each_with_index.min[1]
+                @chord_tones[nearest_note_index]
+            end
+
     end
     
 
